@@ -444,4 +444,4 @@ def main():
 if __name__ == '__main__':
     BOT_TOKEN = "8622099533:AAFd42MONCLE8xU34AXEm_1Mxg3yn3T074U"  # Apna token dalo
 app = Application.builder().token(BOT_TOKEN).build()
-app.run_polling(host=host, port=8080, allowed_updates=Update.ALL_TYPES)
+app.run_polling(allowed_updates=Update.ALL_TYPES)
