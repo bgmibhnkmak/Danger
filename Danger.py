@@ -438,7 +438,7 @@ def main():
     application.add_handler(CommandHandler("help", help_command))
     
     print("Bot started...")
-    application.run_polling()
+    application.run_polling(host=host, port=8080)
 
 if __name__ == '__main__':
     main()
