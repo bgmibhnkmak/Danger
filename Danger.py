@@ -440,5 +440,11 @@ def main():
     print("Bot started...")
     application.run_polling(host=host, port=8080)
 
+# Line 444 ke around ye hoga, fix karo:
 if __name__ == '__main__':
-    application.run_polling(host=host)
+    # Pehle:
+    # application = Application.builder().token(BOT_TOKEN).build()
+    
+    # Fix:
+    app = Application.builder().token(BOT_TOKEN).build()
+    app.run_polling(host=host, port=8080)
