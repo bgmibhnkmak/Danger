@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 # Configuration
 MONGO_URI = 'mongodb+srv://bgmibhnkmmak_db_user:5ZZpltU3dNcx1t3h@cluster0.otnamwy.mongodb.net/?appName=Cluster0'
-TELEGRAM_BOT_TOKEN = '8727993830:AAE0RU5hBy5UNhzCM_wFfBFJJzKmHMXsTlA'
+TELEGRAM_BOT_TOKEN = '8622099533:AAFd42MONCLE8xU34AXEm_1Mxg3yn3T074U'
 ADMIN_USER_ID = 5628671567
 
 # Initialize MongoDB
