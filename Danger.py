@@ -441,4 +441,4 @@ def main():
     application.run_polling(host=host, port=8080)
 
 if __name__ == '__main__':
-    main()
+    application.run_polling(host=host)
