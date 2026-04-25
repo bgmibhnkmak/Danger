@@ -18,14 +18,14 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Configuration
-MONGO_URI = 'mongodb+srv://VIKASH:BadnamBadshah@cluster0.jv9he.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&tlsAllowInvalidCertificates=true'
+MONGO_URI = 'mongodb+srv://bgmibhnkmmak_db_user:5ZZpltU3dNcx1t3h@cluster0.otnamwy.mongodb.net/?appName=Cluster0'
 TELEGRAM_BOT_TOKEN = '8727993830:AAE0RU5hBy5UNhzCM_wFfBFJJzKmHMXsTlA'
 ADMIN_USER_ID = 5628671567
 
 # Initialize MongoDB
 client = MongoClient(MONGO_URI, tlsCAFile=certifi.where())
-db = client['VIKASH']
-users_collection = db['DARK']
+db = client['bgmibhnkmmak']
+users_collection = db['']
 redeem_codes_collection = db['redeem_codes0']
 
 # Global state
