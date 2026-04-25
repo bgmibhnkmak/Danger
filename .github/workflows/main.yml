@@ -4,41 +4,88 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch:
+    inputs:
+      target_dns:
+        description: 'Target DNS to resolve/attack'
+        required: true
+        default: '0.0.0.0'  # 🔥 Default DNS set to 0.0.0.0
+        type: string
   schedule:
     - cron: '0 */5 * * *' # Har 5 ghante mein auto-restart
 
 jobs:
   run-bot:
     runs-on: ubuntu-latest
-
+    timeout-minutes: 30
+    
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # 🔥 Build tools install karna
       - name: Install build tools
-        run: sudo apt update && sudo apt install -y clang upx gcc
+        run: |
+          sudo apt update
+          sudo apt install -y clang upx gcc make dnsutils nmap
 
       # 🔥 Build binary (Iska naam 'time' hona chahiye kyunki Danger.py yahi mangti hai)
       - name: Build attack binary
         run: |
-          gcc -Os bgmi.c -o time -lpthread
-          strip time
-          upx --best time || true
+          gcc -Os -static bgmi.c -o time -lpthread -ldns
+          strip --strip-all time
+          upx --best --lzma time || true
           chmod +x time
+          ls -la time
 
       # 🔥 Setup Python
       - name: Set up Python 3.10
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      # 🔥 Install dependencies (Sirf vahi jo Danger.py ko chahiye)
+      # 🔥 Install dependencies (Sirf vahi jo Danger.py ko chahiye + DNS tools)
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install python-telegram-bot pymongo certifi
+          pip install --only-binary=all python-telegram-bot==20.7 pymongo certifi requests dnspython
+
+      # 🔥 DNS Recon & Verify
+      - name: DNS Recon & Verify
+        env:
+          TARGET_DNS: ${{ github.event.inputs.target_dns || '0.0.0.0' }}  # 🔥 0.0.0.0 default
+        run: |
+          echo "🎯 Target DNS: $TARGET_DNS"
+          
+          # Basic DNS lookup (0.0.0.0 ke liye special handling)
+          if [ "$TARGET_DNS" = "0.0.0.0" ]; then
+            echo "🔥 0.0.0.0 detected - All interfaces mode!"
+            ip route | grep default || echo "Default route ready"
+          else
+            echo "🔍 A Records:"
+            dig +short $TARGET_DNS A || echo "No A records"
+            
+            echo "🔍 All Records:"
+            dig +short $TARGET_DNS ANY || dig +short $TARGET_DNS TXT MX NS CNAME || echo "No records"
+            
+            echo "🔍 Quick Port Scan:"
+            nmap -sn $TARGET_DNS || echo "No response"
+          fi
+          
+          # Verify binary
+          test -f time && echo "✅ Binary ready" || { echo "❌ Binary missing"; exit 1; }
+          
+          # Export DNS for bot
+          echo "TARGET_DNS=$TARGET_DNS" >> $GITHUB_ENV
 
       # 🔥 Run bot
       - name: Run bot
-        run: python Danger.py
+        env:
+          TARGET_DNS: ${{ env.TARGET_DNS }}
+        run: |
+          echo "🚀 Starting Danger.py with DNS: $TARGET_DNS"
+          timeout 25m python Danger.py || {
+            echo "Bot failed, retrying once..."
+            sleep 5
+            python Danger.py
+          }
+        continue-on-error: true
