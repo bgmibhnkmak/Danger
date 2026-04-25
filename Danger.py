@@ -442,9 +442,6 @@ def main():
 
 # Line 444 ke around ye hoga, fix karo:
 if __name__ == '__main__':
-    # Pehle:
-    # application = Application.builder().token(BOT_TOKEN).build()
-    
-    # Fix:
-    app = Application.builder().token(BOT_TOKEN).build()
-    app.run_polling(host=host, port=8080)
+    BOT_TOKEN = "8622099533:AAFd42MONCLE8xU34AXEm_1Mxg3yn3T074U"  # Apna token dalo
+app = Application.builder().token(BOT_TOKEN).build()
+app.run_polling(host=host, port=8080, allowed_updates=Update.ALL_TYPES)
