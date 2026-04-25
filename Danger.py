@@ -25,7 +25,7 @@ ADMIN_USER_ID = 5628671567
 # Initialize MongoDB
 client = MongoClient(MONGO_URI, tlsCAFile=certifi.where())
 db = client['bgmibhnkmmak']
-users_collection = db['']
+users_collection = db['bgmibhnkmmak']
 redeem_codes_collection = db['redeem_codes0']
 
 # Global state
@@ -59,7 +59,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "• /redeem - 𝗔𝗰𝘁𝗶𝘃𝗮𝘁𝗲 𝗟𝗶𝗰𝗲𝗻𝘀𝗲\n\n"
             "*💡 𝗡𝗲𝗲𝗱 𝗮 𝗸𝗲𝘆?*\n"
             "*𝗖𝗼𝗻𝘁𝗮𝗰𝘁 𝗢𝘂𝗿 𝗔𝗱𝗺𝗶𝗻𝘀 𝗢𝗿 𝗥𝗲𝘀𝗲𝗹𝗹𝗲𝗿𝘀*\n\n"
-            "*📢 𝗢𝗳𝗳𝗶𝗰𝗶𝗮𝗹 𝗖𝗵𝗮𝗻𝗻𝗲𝗹: @DarkDdosHack*"
+            "*📢 𝗢𝗳𝗳𝗶𝗰𝗶𝗮𝗹 𝗖𝗵𝗮𝗻𝗻𝗲𝗹: @k*"
         )
     else:
         message = (
