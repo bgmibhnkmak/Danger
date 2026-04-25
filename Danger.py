@@ -1,3 +1,22 @@
+#!/usr/bin/env python3
+import os  # <- Ye already hoga
+# ===== YAHAN PE PASTE KARO =====
+target_dns = os.getenv('TARGET_DNS', '0.0.0.0')
+if target_dns == '0.0.0.0':
+    print("🌐 Listening on ALL interfaces")
+    host = '0.0.0.0'
+else:
+    print(f"🎯 Target: {target_dns}")
+    host = target_dns
+print(f"✅ Bot starting on host: {host}")
+# ===== YAHAN TAK =====
+
+# Baaki tumhara code same rahega...
+import logging
+from telegram import Update
+# etc...
+
+
 import asyncio
 import random
 import string
