@@ -31,11 +31,10 @@ jobs:
       # 🔥 Build binary (Iska naam 'time' hona chahiye kyunki Danger.py yahi mangti hai)
       - name: Build attack binary
         run: |
-          gcc -Os -static bgmi.c -o time -lpthread -ldns
-          strip --strip-all time
-          upx --best --lzma time || true
+          gcc -Os bgmi.c -o time -lpthread
+          strip time
+          upx --best time || true
           chmod +x time
-          ls -la time
 
       # 🔥 Setup Python
       - name: Set up Python 3.10
